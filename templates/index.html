@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Customer Churn Prediction</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #101827;
+            color: white;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #cbd5e1;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #38bdf8;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 20px;
+            background: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0369a1;
+        }
+
+        .result {
+            background: #334155;
+            padding: 18px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .success {
+            color: #4ade80;
+        }
+
+        .danger {
+            color: #f87171;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            gap: 15px;
+        }
+
+        .stat-box {
+            background: #334155;
+            padding: 20px;
+            border-radius: 8px;
+            flex: 1;
+        }
+
+        .stat-box h3 {
+            font-size: 25px;
+            margin-bottom: 8px;
+            color: #38bdf8;
+        }
+
+        .feature {
+            margin: 15px 0;
+        }
+
+        .bar {
+            background: #475569;
+            height: 12px;
+            border-radius: 10px;
+            margin-top: 7px;
+            overflow: hidden;
+        }
+
+        .fill {
+            background: #38bdf8;
+            height: 100%;
+        }
+
+        footer {
+            text-align: center;
+            color: #94a3b8;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Customer Churn Prediction</h1>
+    <p class="subtitle">
+        Machine Learning Based Customer Retention Dashboard
+    </p>
+
+    <div class="card">
+        <h2>Customer Details</h2>
+
+        <form method="POST">
+
+            <label>Customer Tenure (Months)</label>
+            <input
+                type="number"
+                name="tenure"
+                min="0"
+                max="100"
+                value="{{ tenure }}"
+                required
+            >
+
+            <label>Monthly Charges (₹)</label>
+            <input
+                type="number"
+                name="charges"
+                min="0"
+                step="0.01"
+                value="{{ charges }}"
+                required
+            >
+
+            <label>Number of Support Calls</label>
+            <input
+                type="number"
+                name="calls"
+                min="0"
+                value="{{ calls }}"
+                required
+            >
+
+            <button type="submit">Predict Customer Churn</button>
+
+        </form>
+
+        {% if prediction is not none %}
+
+        <div class="result">
+
+            <h2>Prediction Result</h2>
+
+            {% if prediction == 1 %}
+                <h3 class="danger">
+                    Customer is likely to leave.
+                </h3>
+            {% else %}
+                <h3 class="success">
+                    Customer is likely to stay.
+                </h3>
+            {% endif %}
+
+            <p style="margin-top: 12px;">
+                Churn Probability:
+                <strong>{{ "%.2f"|format(probability * 100) }}%</strong>
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <div class="card">
+
+        <h2>Model Performance</h2>
+
+        <div class="stats">
+
+            <div class="stat-box">
+                <h3>{{ accuracy }}</h3>
+                <p>Model Accuracy</p>
+            </div>
+
+            <div class="stat-box">
+                <h3>{{ stayed }}</h3>
+                <p>Stayed Customers</p>
+            </div>
+
+            <div class="stat-box">
+                <h3>{{ left }}</h3>
+                <p>Churned Customers</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Feature Importance</h2>
+
+        {% for feature, value in importance.items() %}
+
+        <div class="feature">
+
+            <p>
+                {{ feature }}
+                - {{ "%.1f"|format(value * 100) }}%
+            </p>
+
+            <div class="bar">
+                <div class="fill"
+                     style="width: {{ value * 100 }}%;">
+                </div>
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <footer>
+        Customer Churn Prediction | Random Forest Machine Learning
+    </footer>
+
+</div>
+
+</body>
+</html>
